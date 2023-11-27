@@ -54,7 +54,12 @@ public class Toolkit {
     public List<NewsArticles> loadNews() {
         List<NewsArticles> listNews = new ArrayList<>();
         //TODO Task 4.2 - 5 Marks
-        File directory = new File("src/main/resources/News");
+        File directory = null;
+        try {
+            directory = getFileFromResource("News");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
 
         for (File file : directory.listFiles()) {
             BufferedReader reader = null;
