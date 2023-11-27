@@ -1,11 +1,9 @@
 package uob.oop;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +22,23 @@ public class Toolkit {
     public void loadGlove() throws IOException {
         BufferedReader myReader = null;
         //TODO Task 4.1 - 5 marks
-
+        try {
+            myReader = new BufferedReader(new FileReader(getFileFromResource(FILENAME_GLOVE)));
+        } catch (URISyntaxException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        listVocabulary = new ArrayList<>();
+        listVectors = new ArrayList<>();
+        myReader.lines().forEach(rec -> {
+            String[] recArr = rec.split(",");
+            listVocabulary.add(recArr[0]);
+            double[] nums = new double[recArr.length - 1];
+            for (int i = 1; i < recArr.length; i++) {
+                nums[i - 1] = Double.parseDouble(recArr[i]);
+            }
+            listVectors.add(nums);
+        });
     }
 
     private static File getFileFromResource(String fileName) throws URISyntaxException {
@@ -40,6 +54,28 @@ public class Toolkit {
     public List<NewsArticles> loadNews() {
         List<NewsArticles> listNews = new ArrayList<>();
         //TODO Task 4.2 - 5 Marks
+        File directory = new File("src/main/resources/News");
+
+        for (File file : directory.listFiles()) {
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(file));
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            reader.lines().forEach(l -> sb.append(l).append("\n"));
+            String htmlContents = sb.toString();
+
+            String title = HtmlParser.getNewsTitle(htmlContents);
+            String content = HtmlParser.getNewsContent(htmlContents);
+            NewsArticles.DataType type = HtmlParser.getDataType(htmlContents);
+            String label = HtmlParser.getLabel(htmlContents);
+
+            NewsArticles article = new NewsArticles(title, content, type, label);
+            listNews.add(article);
+        }
 
         return listNews;
     }
