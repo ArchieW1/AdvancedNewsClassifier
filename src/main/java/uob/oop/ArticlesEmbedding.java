@@ -15,12 +15,12 @@ public class ArticlesEmbedding extends NewsArticles {
 
     public ArticlesEmbedding(String _title, String _content, NewsArticles.DataType _type, String _label) {
         //TODO Task 5.1 - 1 Mark
-        super("","",null,"");
+        super(_title, _content, _type, _label);
     }
 
     public void setEmbeddingSize(int _size) {
         //TODO Task 5.2 - 0.5 Marks
-
+        this.intSize = _size;
     }
 
     public int getEmbeddingSize(){
@@ -30,9 +30,46 @@ public class ArticlesEmbedding extends NewsArticles {
     @Override
     public String getNewsContent() {
         //TODO Task 5.3 - 10 Marks
+        if (!processedText.isEmpty()) {
+            return processedText;
+        }
 
+        String cleaned = textCleaning(super.getNewsContent());
+        String cleanedLemmanized = lemmanized(cleaned);
+        processedText = removeStopWords(cleanedLemmanized, Toolkit.STOPWORDS);
 
         return processedText.trim();
+    }
+
+    private static String lemmanized(String cleaned) {
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,pos,lemma");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        CoreDocument doc = pipeline.processToCoreDocument(cleaned);
+
+        StringBuilder sb = new StringBuilder();
+        for (CoreLabel token : doc.tokens()) {
+            sb.append(token.lemma()).append(" ");
+        }
+        return sb.toString();
+    }
+
+    public static String removeStopWords(String _content, String[] _stopWords) {
+        StringBuilder sbContent = new StringBuilder();
+
+        for (String word : _content.split(" ")) {
+            boolean isStopWord = false;
+            for (String stopWord : _stopWords) {
+                if (word.equals(stopWord)) {
+                    isStopWord = true;
+                    break;
+                }
+            }
+            if (!isStopWord)
+                sbContent.append(word).append(" ");
+        }
+
+        return sbContent.toString().trim();
     }
 
     public INDArray getEmbedding() throws Exception {
