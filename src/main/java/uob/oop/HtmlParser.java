@@ -42,8 +42,18 @@ public class HtmlParser {
 
     public static NewsArticles.DataType getDataType(String _htmlCode) {
         //TODO Task 3.1 - 1.5 Marks
-
-        return null; //Please modify the return value.
+        String datatypeTagOpen = "<datatype>";
+        String datatypeTagClose = "</datatype>";
+        int openIndex = _htmlCode.indexOf(datatypeTagOpen);
+        int closeIndex = _htmlCode.indexOf(datatypeTagClose);
+        if (openIndex == -1 || closeIndex == -1) {
+            return NewsArticles.DataType.Testing;
+        }
+        String datatypeStr = _htmlCode.substring(openIndex + datatypeTagOpen.length(), closeIndex);
+        if (datatypeStr.equals("Training")) {
+            return NewsArticles.DataType.Training;
+        }
+        return NewsArticles.DataType.Testing; //Please modify the return value.
     }
 
     public static String getLabel (String _htmlCode) {
