@@ -42,14 +42,17 @@ public class HtmlParser {
 
     public static NewsArticles.DataType getDataType(String _htmlCode) {
         //TODO Task 3.1 - 1.5 Marks
-        String datatypeTagOpen = "<datatype>";
-        String datatypeTagClose = "</datatype>";
-        int openIndex = _htmlCode.indexOf(datatypeTagOpen);
-        int closeIndex = _htmlCode.indexOf(datatypeTagClose);
-        if (openIndex == -1 || closeIndex == -1) {
+        String dataTypeTagOpen = "<datatype>";
+        String dataTypeTagClose = "</datatype>";
+
+        int dataTypeStart = _htmlCode.indexOf(dataTypeTagOpen);
+        int dataTypeEnd = _htmlCode.indexOf(dataTypeTagClose);
+
+        if (dataTypeStart == -1 || dataTypeEnd == -1) {
             return NewsArticles.DataType.Testing;
         }
-        String datatypeStr = _htmlCode.substring(openIndex + datatypeTagOpen.length(), closeIndex);
+
+        String datatypeStr = _htmlCode.substring(dataTypeStart + dataTypeTagOpen.length(), dataTypeEnd);
         if (datatypeStr.equals("Training")) {
             return NewsArticles.DataType.Training;
         }
@@ -58,8 +61,17 @@ public class HtmlParser {
 
     public static String getLabel (String _htmlCode) {
         //TODO Task 3.2 - 1.5 Marks
+        String labelTagOpen = "<label>";
+        String labelTagClose = "</label>";
 
-        return null; //Please modify the return value.
+        int labelStart = _htmlCode.indexOf(labelTagOpen);
+        int labelEnd = _htmlCode.indexOf(labelTagClose);
+
+        if (labelStart == -1 || labelEnd == -1) {
+            return "-1";
+        }
+
+        return _htmlCode.substring(labelStart + labelTagOpen.length(), labelEnd); //Please modify the return value.
     }
 
 
