@@ -88,7 +88,6 @@ public class AdvancedNewsClassifier {
         //TODO Task 6.2 - 5 Marks
         List<Integer> lengthList = new ArrayList<>();
         for (ArticlesEmbedding article : _listEmbedding) {
-            //TODO Fix this
             int length = 0;
             String[] content = article.getNewsContent().split(" ");
             for (String word : content) {

@@ -82,12 +82,29 @@ public class ArticlesEmbedding extends NewsArticles {
             throw new InvalidTextException("Invalid text");
         }
 
-        String[] words = this.processedText.split(" ");
-        newsEmbedding = Nd4j.zeros(intSize, words.length);
-        for (String word : words) {
-
+        if (!newsEmbedding.isEmpty()) {
+            return Nd4j.vstack(newsEmbedding.mean(1));
         }
 
+        int vecSize = AdvancedNewsClassifier.listGlove.get(0).getVector().getVectorSize();
+        newsEmbedding = Nd4j.zeros(intSize, vecSize);
+
+        String[] words = this.processedText.split(" ");
+        int index = 0;
+        for (String word : words) {
+            if (index > intSize - 1) {
+                break;
+            }
+            for (Glove glove : AdvancedNewsClassifier.listGlove) {
+                if (glove.getVocabulary().equals(word)) {
+                    newsEmbedding.putRow(index, Nd4j.create(glove.getVector().getAllElements()));
+                    index++;
+                    break;
+                }
+            }
+        }
+
+        System.out.println(newsEmbedding);
         return Nd4j.vstack(newsEmbedding.mean(1));
     }
 
