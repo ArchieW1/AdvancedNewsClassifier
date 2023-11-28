@@ -75,6 +75,18 @@ public class ArticlesEmbedding extends NewsArticles {
     public INDArray getEmbedding() throws Exception {
         //TODO Task 5.4 - 20 Marks
 
+        if (this.intSize == -1) {
+            throw new InvalidSizeException("Invalid size");
+        }
+        if (this.processedText.isEmpty()) {
+            throw new InvalidTextException("Invalid text");
+        }
+
+        String[] words = this.processedText.split(" ");
+        newsEmbedding = Nd4j.zeros(intSize, words.length);
+        for (String word : words) {
+
+        }
 
         return Nd4j.vstack(newsEmbedding.mean(1));
     }
