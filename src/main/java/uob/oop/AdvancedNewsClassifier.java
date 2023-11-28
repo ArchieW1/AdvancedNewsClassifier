@@ -57,10 +57,22 @@ public class AdvancedNewsClassifier {
     public List<Glove> createGloveList() {
         List<Glove> listResult = new ArrayList<>();
         //TODO Task 6.1 - 5 Marks
-
+        for (int i = 0; i < Toolkit.listVocabulary.size(); i++) {
+            String word = Toolkit.listVocabulary.get(i);
+            boolean isStopWord = false;
+            for (String stopWord : Toolkit.STOPWORDS) {
+                if (word.equals(stopWord)) {
+                    isStopWord = true;
+                    break;
+                }
+            }
+            if (!isStopWord) {
+                double[] nums = Toolkit.listVectors.get(i);
+                listResult.add(new Glove(word, new Vector(nums)));
+            }
+        }
         return listResult;
     }
-
 
     public static List<ArticlesEmbedding> loadData() {
         List<ArticlesEmbedding> listEmbedding = new ArrayList<>();
@@ -74,8 +86,20 @@ public class AdvancedNewsClassifier {
     public int calculateEmbeddingSize(List<ArticlesEmbedding> _listEmbedding) {
         int intMedian = -1;
         //TODO Task 6.2 - 5 Marks
+        List<Integer> lengthList = new ArrayList<>();
+        for (ArticlesEmbedding article : _listEmbedding) {
+            //TODO Fix this
+            int contentLength = article.getNewsContent().split(" ").length;
+            int titleLength = article.getNewsTitle().split(" ").length;
+            lengthList.add(contentLength - titleLength - 100);
+        }
+        lengthList.sort(Integer::compareTo);
 
-        return intMedian;
+        final int N = lengthList.size();
+        if (N % 2 == 0) {
+            return (lengthList.get(N/2) + lengthList.get(N/2+1))/2;
+        }
+        return lengthList.get((N+1)/2);
     }
 
     public void populateEmbedding() {
