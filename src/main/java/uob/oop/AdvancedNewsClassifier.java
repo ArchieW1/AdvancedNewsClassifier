@@ -89,15 +89,25 @@ public class AdvancedNewsClassifier {
         List<Integer> lengthList = new ArrayList<>();
         for (ArticlesEmbedding article : _listEmbedding) {
             //TODO Fix this
-            int contentLength = article.getNewsContent().split(" ").length;
-            int titleLength = article.getNewsTitle().split(" ").length;
-            lengthList.add(contentLength - titleLength - 100);
+            int length = 0;
+            String[] content = article.getNewsContent().split(" ");
+            for (String word : content) {
+                for (Glove glove : listGlove) {
+                    if (glove.getVocabulary().equals(word)) {
+                        length++;
+                        break;
+                    }
+                }
+            }
+
+            lengthList.add(length);
         }
         lengthList.sort(Integer::compareTo);
 
         final int N = lengthList.size();
         if (N % 2 == 0) {
-            return (lengthList.get(N/2) + lengthList.get(N/2+1))/2;
+            double averageMedian = (lengthList.get(N/2) + (double) lengthList.get(N/2+1))/2;
+            return (int) Math.round(averageMedian);
         }
         return lengthList.get((N+1)/2);
     }
