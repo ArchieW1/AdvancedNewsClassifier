@@ -113,7 +113,21 @@ public class AdvancedNewsClassifier {
 
     public void populateEmbedding() {
         //TODO Task 6.3 - 10 Marks
-
+        for (ArticlesEmbedding article : this.listEmbedding) {
+            boolean erroneous = true;
+            while (erroneous) {
+                try {
+                    article.getEmbedding();
+                    erroneous = false;
+                } catch (InvalidSizeException e) {
+                    article.setEmbeddingSize(this.embeddingSize);
+                } catch (InvalidTextException e) {
+                    article.getNewsContent();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     public DataSetIterator populateRecordReaders(int _numberOfClasses) throws Exception {

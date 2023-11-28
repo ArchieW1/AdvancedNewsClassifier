@@ -104,7 +104,6 @@ public class ArticlesEmbedding extends NewsArticles {
             }
         }
 
-        System.out.println(newsEmbedding);
         return Nd4j.vstack(newsEmbedding.mean(1));
     }
 
