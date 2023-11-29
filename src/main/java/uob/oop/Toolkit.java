@@ -30,15 +30,17 @@ public class Toolkit {
         }
         listVocabulary = new ArrayList<>();
         listVectors = new ArrayList<>();
-        myReader.lines().forEach(rec -> {
-            String[] recArr = rec.split(",");
-            listVocabulary.add(recArr[0]);
-            double[] nums = new double[recArr.length - 1];
-            for (int i = 1; i < recArr.length; i++) {
-                nums[i - 1] = Double.parseDouble(recArr[i]);
-            }
-            listVectors.add(nums);
-        });
+        myReader.lines().forEach(Toolkit::parseRecordStr);
+    }
+
+    private static void parseRecordStr(String rec) {
+        String[] recArr = rec.split(",");
+        listVocabulary.add(recArr[0]);
+        double[] nums = new double[recArr.length - 1];
+        for (int i = 1; i < recArr.length; i++) {
+            nums[i - 1] = Double.parseDouble(recArr[i]);
+        }
+        listVectors.add(nums);
     }
 
     private static File getFileFromResource(String fileName) throws URISyntaxException {
@@ -54,35 +56,50 @@ public class Toolkit {
     public List<NewsArticles> loadNews() {
         List<NewsArticles> listNews = new ArrayList<>();
         //TODO Task 4.2 - 5 Marks
-        File directory = null;
+        File directory;
         try {
             directory = getFileFromResource("News");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
-        for (File file : directory.listFiles()) {
-            BufferedReader reader = null;
-            try {
-                reader = new BufferedReader(new FileReader(file));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+        // Apparently mac orders incorrectly by default so added a sort to ensure consistency.
+        List<File> listFiles = listSortedFiles(directory);
 
-            StringBuilder sb = new StringBuilder();
-            reader.lines().forEach(l -> sb.append(l).append("\n"));
-            String htmlContents = sb.toString();
-
-            String title = HtmlParser.getNewsTitle(htmlContents);
-            String content = HtmlParser.getNewsContent(htmlContents);
-            NewsArticles.DataType type = HtmlParser.getDataType(htmlContents);
-            String label = HtmlParser.getLabel(htmlContents);
-
-            NewsArticles article = new NewsArticles(title, content, type, label);
-            listNews.add(article);
+        for (File file : listFiles) {
+            listNews.add(parseArticle(file));
         }
 
         return listNews;
+    }
+
+    private static NewsArticles parseArticle(File file) {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        reader.lines().forEach(l -> sb.append(l).append("\n"));
+        String htmlContents = sb.toString();
+
+        String title = HtmlParser.getNewsTitle(htmlContents);
+        String content = HtmlParser.getNewsContent(htmlContents);
+        NewsArticles.DataType type = HtmlParser.getDataType(htmlContents);
+        String label = HtmlParser.getLabel(htmlContents);
+
+        return new NewsArticles(title, content, type, label);
+    }
+
+    private static List<File> listSortedFiles(File directory) {
+        List<File> listFiles = new ArrayList<>();
+        for (File file : directory.listFiles()) {
+            listFiles.add(file);
+        }
+        listFiles.sort((x, y) -> x.getName().compareTo(y.getName()));
+        return listFiles;
     }
 
     public static List<String> getListVocabulary() {
