@@ -233,6 +233,6 @@ public class AdvancedNewsClassifier {
                 output.append(display).append("\r\n");
             }
         }
-        System.out.println(output.toString().trim() + "\r");
+        System.out.print(output);
     }
 }
