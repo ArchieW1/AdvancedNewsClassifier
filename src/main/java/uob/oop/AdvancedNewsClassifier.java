@@ -138,7 +138,19 @@ public class AdvancedNewsClassifier {
 
         //TODO Task 6.4 - 8 Marks
 
-        return new ListDataSetIterator(listDS, BATCHSIZE);
+        for (ArticlesEmbedding article : listEmbedding) {
+            if (article.getNewsType() != NewsArticles.DataType.Training) {
+                continue;
+            }
+
+            inputNDArray = article.getEmbedding();
+            outputNDArray = Nd4j.zeros(1, _numberOfClasses);
+            int index = Integer.parseInt(article.getNewsLabel()) - 1;
+            outputNDArray.putScalar(new int[] {0, index}, 1);
+            listDS.add(new DataSet(inputNDArray, outputNDArray));
+        }
+
+        return new ListDataSetIterator<>(listDS, BATCHSIZE);
     }
 
     public MultiLayerNetwork buildNeuralNetwork(int _numOfClasses) throws Exception {
@@ -172,12 +184,55 @@ public class AdvancedNewsClassifier {
         List<Integer> listResult = new ArrayList<>();
         //TODO Task 6.5 - 8 Marks
 
+        for (ArticlesEmbedding article : _listEmbedding) {
+            if (article.getNewsType() != NewsArticles.DataType.Testing) {
+                continue;
+            }
+
+            int prediction = myNeuralNetwork.predict(article.getEmbedding())[0];
+            article.setNewsLabel(Integer.toString(prediction + 1));
+            listResult.add(prediction);
+        }
 
         return listResult;
     }
 
     public void printResults() {
         //TODO Task 6.6 - 6.5 Marks
-        
+        int max = 0;
+        for (ArticlesEmbedding article : this.listEmbedding) {
+            if (article.getNewsType() != NewsArticles.DataType.Testing) {
+                continue;
+            }
+
+            int label = Integer.parseInt(article.getNewsLabel());
+            if (max < label) {
+                max = label;
+            }
+        }
+
+        List<List<String>> groups = new ArrayList<>();
+        for (int i = 0; i < max; i++) {
+            groups.add(new ArrayList<>());
+        }
+
+        for (ArticlesEmbedding article : this.listEmbedding) {
+            if (article.getNewsType() != NewsArticles.DataType.Testing) {
+                continue;
+            }
+
+            String display = article.getNewsTitle();
+            int label = Integer.parseInt(article.getNewsLabel());
+            groups.get(label - 1).add(display);
+        }
+
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < groups.size(); i++) {
+            output.append("Group ").append(i + 1).append("\r\n");
+            for (String display : groups.get(i)) {
+                output.append(display).append("\r\n");
+            }
+        }
+        System.out.println(output.toString().trim());
     }
 }

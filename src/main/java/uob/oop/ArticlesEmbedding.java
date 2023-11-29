@@ -51,7 +51,7 @@ public class ArticlesEmbedding extends NewsArticles {
         for (CoreLabel token : doc.tokens()) {
             sb.append(token.lemma()).append(" ");
         }
-        return sb.toString();
+        return sb.toString().toLowerCase();
     }
 
     public static String removeStopWords(String _content, String[] _stopWords) {
