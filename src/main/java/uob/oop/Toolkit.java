@@ -1,6 +1,9 @@
 package uob.oop;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.Buffer;
@@ -77,7 +80,7 @@ public class Toolkit {
         BufferedReader reader;
         try {
             reader = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
