@@ -25,6 +25,11 @@ public class Toolkit {
     public void loadGlove() throws IOException {
         BufferedReader myReader = null;
         //TODO Task 4.1 - 5 marks
+
+        if (listVocabulary != null && listVectors != null) {
+            return;
+        }
+
         try {
             myReader = new BufferedReader(new FileReader(getFileFromResource(FILENAME_GLOVE)));
         } catch (URISyntaxException e) {
