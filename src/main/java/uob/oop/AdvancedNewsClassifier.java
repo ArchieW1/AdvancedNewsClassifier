@@ -106,7 +106,7 @@ public class AdvancedNewsClassifier {
         final int N = lengthList.size();
         if (N % 2 == 0) {
             double averageMedian = (lengthList.get(N/2) + (double) lengthList.get(N/2+1))/2;
-            return (int) Math.round(averageMedian);
+            return (int) averageMedian;
         }
         return lengthList.get((N+1)/2);
     }
