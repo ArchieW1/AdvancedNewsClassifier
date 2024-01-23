@@ -26,13 +26,9 @@ public class Toolkit {
         BufferedReader myReader = null;
         //TODO Task 4.1 - 5 marks
 
-        if (listVocabulary != null && listVectors != null) {
-            return;
-        }
-
         try {
             myReader = new BufferedReader(new FileReader(getFileFromResource(FILENAME_GLOVE)));
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
@@ -75,7 +71,9 @@ public class Toolkit {
         List<File> listFiles = listSortedFiles(directory);
 
         for (File file : listFiles) {
-            listNews.add(parseArticle(file));
+            if (file.getName().endsWith(".htm")) {
+                listNews.add(parseArticle(file));
+            }
         }
 
         return listNews;
